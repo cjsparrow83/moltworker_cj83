@@ -32,15 +32,35 @@
   "build": {
     "command": "npm run build",
   },
-  // Container configuration for the Moltbot sandbox
+  {
+  // 1. Define the Container Runtime
   "containers": [
     {
       "class_name": "MoltSandbox",
       "image": "./Dockerfile",
       "instance_type": "standard-1",
-      "max_instances": 1,
-    },
+      "max_instances": 1
+    }
   ],
+
+  // 2. Define the Binding (Must match the class_name above)
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MoltSandbox", // This is the variable name in your code
+        "class_name": "MoltSandbox" 
+      }
+    ]
+  },
+
+  // 3. Keep the Migration (Required for Cloudflare to "register" the class)
+  "migrations": [
+    {
+      "tag": "v2", // Use v2 to ensure a fresh start
+      "new_sqlite_classes": ["MoltSandbox"]
+    }
+  ]
+}
   // R2 bucket for persistent storage (moltbot data, conversations, etc.)
   "r2_buckets": [
     {
